@@ -47,40 +47,46 @@ def calcDubinsPaths(T0, T1, r):
     for i in c:
         for j in d:
             path_type = ''
-            # RSR, LSL
+            # R*R, L*L
             if i.orientation == j.orientation:
-                path_type = 'LSL' if i.orientation == 1 else 'RSR'
-                int1 = i.center - i.orientation * r * perp(j.center - i.center)
-                int2 = j.center - i.orientation * r * perp(j.center - i.center)
+                # if the centers are coincident, there will be just one arc.
+                # so, let the SR (or SL) components be degenerate.
+                if numpy.linalg.norm(i.center - j.center) == 0:
+                    # L, R
+                    path_type = 'L' if i.orientation == 1 else 'R'
 
-                s1 = calcArcLength(T0['p'] - i.center, int1 - i.center, r, i.orientation)
-                s2 = numpy.linalg.norm(i.center - j.center)
-                s3 = calcArcLength(int2 - j.center, T1['p'] - j.center, r, j.orientation)
+                    int1 = T1['p'] - i.center
+                    int2 = T1['p'] - j.center
+                    
+                    dubins_length = calcArcLength(T0['p'] - i.center, T1['p'] - i.center, r, i.orientation)
+ 
+                    print path_type, dubins_length
+                else:
+                    # RSR, LSL, S
+                    path_type = 'LSL' if i.orientation == 1 else 'RSR'
+
+                    int1 = i.center - i.orientation * r * perp(j.center - i.center)
+                    int2 = j.center - i.orientation * r * perp(j.center - i.center)
+
+                    dubins_length = calcArcLength(T0['p'] - i.center, int1 - i.center, r, i.orientation)
+                    dubins_length += numpy.linalg.norm(i.center - j.center)
+                    dubins_length += calcArcLength(int2 - j.center, T1['p'] - j.center, r, j.orientation)
+
+                    print path_type, dubins_length 
+               
+                    # RLR, LRL
+                    if numpy.linalg.norm(i.center - j.center) < 4 * r:
+                        path_type = 'LRL' if i.orientation == 1 else 'RLR'
+                        e = Circle((i.center+j.center)/2 +  i.orientation * sqrt(4 * square(r) - square(numpy.linalg.norm((j.center-i.center)/2))) * perp(j.center-i.center), r, -1 * i.orientation)
                 
-                print path_type
-                i.print_data()
-                j.print_data()
-                print int1, int2, s1 + s2 + s3
-                
+                        int1 = (i.center + e.center)/2
+                        int2 = (e.center + j.center)/2
 
-            # RLR, LRL
-                if numpy.linalg.norm(i.center - j.center) < 4 * r:
-                    path_type = 'LRL' if i.orientation == 1 else 'RLR'
-                    e = Circle((i.center+j.center)/2 +  i.orientation * sqrt(4 * square(r) - square(numpy.linalg.norm((j.center-i.center)/2))) * perp(j.center-i.center), r, -1 * i.orientation)
-                
-                    int1 = (i.center + e.center)/2
-                    int2 = (e.center + j.center)/2
+                        dubins_length = calcArcLength(T0['p'] - i.center, int1 - i.center, r, i.orientation)
+                        dubins_length += calcArcLength(int1 - e.center, int2 - e.center, r, -i.orientation)
+                        dubins_length += calcArcLength(int2 - j.center, T1['p'] - j.center, r, j.orientation)
 
-                    s1 = calcArcLength(T0['p'] - i.center, int1 - i.center, r, i.orientation)
-                    s2 = calcArcLength(int1 - e.center, int2 - e.center, r, -i.orientation)
-                    s3 = calcArcLength(int2 - j.center, T1['p'] - j.center, r, j.orientation)
-
-                    print path_type
-                    i.print_data()
-                    j.print_data()
-                    print int1, int2, s1 + s2 + s3
-
-
+                        print path_type, dubins_length
             # RSL, LSR
             if i.orientation != j.orientation and numpy.linalg.norm(i.center - j.center) >= 2 * r:
                 path_type = 'LSR' if i.orientation == 1 else 'RSL'
@@ -90,17 +96,14 @@ def calcDubinsPaths(T0, T1, r):
                 int1 = (i.center + j.center)/2 - i.orientation * c_perp * perp(j.center - i.center) - c_parallel * normalize(j.center - i.center)
                 int2 = (i.center + j.center)/2 + i.orientation * c_perp * perp(j.center - i.center) + c_parallel * normalize(j.center - i.center)
 
-                s1 = calcArcLength(T0['p'] - i.center, int1 - i.center, r, i.orientation)
-                s2 = numpy.linalg.norm(i.center - j.center)
-                s3 = calcArcLength(int2 - j.center, T1['p'] - j.center, r, j.orientation)
+                dubins_length = calcArcLength(T0['p'] - i.center, int1 - i.center, r, i.orientation)
+                dubins_length += numpy.linalg.norm(i.center - j.center)
+                dubins_length += calcArcLength(int2 - j.center, T1['p'] - j.center, r, j.orientation)
 
-                print path_type
-                i.print_data()
-                j.print_data()
-                print int1, int2, s1 + s2 + s3
-
+           
+                print path_type, dubins_length
 
     
-T0 = {'p':numpy.array([0,0]), 'x':numpy.array([1,0])}
-T1 = {'p':numpy.array([0,0]), 'x':numpy.array([0,1])}
+T0 = {'p':numpy.array([0,0]), 'x':numpy.array([0,1])}
+T1 = {'p':numpy.array([1,1]), 'x':numpy.array([1,0])}
 calcDubinsPaths(T0, T1, 1)    
