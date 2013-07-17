@@ -135,9 +135,8 @@ def calcDubinsLength(Ti, Tf, r):
 #sample input
 '''    
 class TangentVector:
-    def __init__(self, _lat, _lon, _direction):
-        #p has rectangular coord in meters, approximating the earth as locally flat
-        self.p = numpy.array([6371000 * numpy.cos(_lat) * numpy.pi / 180.0, 6371000 * _lon * numpy.pi / 180.0])
+    def __init__(self, _coords, _direction):
+        self.p = _coords
         self.x = numpy.array([numpy.cos(_direction), numpy.sin(_direction)])
 
 
