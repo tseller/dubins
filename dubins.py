@@ -37,7 +37,7 @@ def calcArcLength(p,q,radius, orientation):
 
     return radius * theta if numpy.cross(p,q) * orientation >= 0 else radius*(2 * numpy.pi - theta)
 
-def calcDubinsPaths(Ti, Tf, r):
+def calcDubinsLength(Ti, Tf, r):
     dubins_length = float('inf')
     
     c = []
@@ -145,5 +145,5 @@ class TangentVector:
 Ti = TangentVector(-122, 37.1, 180)
 Tf = TangentVector(-122, 37, 181)
 
-print calcDubinsPaths(Ti, Tf, 1)
+print calcDubinsLength(Ti, Tf, 1)
 ''' 
