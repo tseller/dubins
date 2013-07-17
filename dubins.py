@@ -60,7 +60,7 @@ def calcDubinsLength(Ti, Tf, r):
                 # so, let the SR (or SL) components be degenerate.
                 if numpy.linalg.norm(i.center - j.center) == 0:
                     # L, R
-                    inTf = Tf.p - i.center
+                    int1 = Tf.p - i.center
                     int2 = Tf.p - j.center
                     
                     s = calcArcLength(Ti.p - i.center, Tf.p - i.center, r, i.orientation)
@@ -73,10 +73,10 @@ def calcDubinsLength(Ti, Tf, r):
                     #print path, s
                 else:
                     # RSR, LSL, S
-                    inTf = i.center - i.orientation * r * perp(j.center - i.center)
+                    int1 = i.center - i.orientation * r * perp(j.center - i.center)
                     int2 = j.center - i.orientation * r * perp(j.center - i.center)
 
-                    s1 = calcArcLength(Ti.p - i.center, inTf - i.center, r, i.orientation)
+                    s1 = calcArcLength(Ti.p - i.center, int1 - i.center, r, i.orientation)
                     path = '%s for %s' %('L' if i.orientation == 1 else 'R', s1)
                     s2 = numpy.linalg.norm(i.center - j.center)
                     path += ', S for %s' %(s2)
@@ -93,12 +93,12 @@ def calcDubinsLength(Ti, Tf, r):
                     if numpy.linalg.norm(i.center - j.center) < 4 * r:
                         e = Circle((i.center+j.center)/2 +  i.orientation * numpy.sqrt(4 * numpy.square(r) - numpy.square(numpy.linalg.norm((j.center-i.center)/2))) * perp(j.center-i.center), r, -1 * i.orientation)
                 
-                        inTf = (i.center + e.center)/2
+                        int1 = (i.center + e.center)/2
                         int2 = (e.center + j.center)/2
 
-                        s1 = calcArcLength(Ti.p - i.center, inTf - i.center, r, i.orientation)
+                        s1 = calcArcLength(Ti.p - i.center, int1 - i.center, r, i.orientation)
                         path = '%s for %s' %('L' if i.orientation == 1 else 'R', s1)
-                        s2 = calcArcLength(inTf - e.center, int2 - e.center, r, -i.orientation)
+                        s2 = calcArcLength(int1 - e.center, int2 - e.center, r, -i.orientation)
                         path += ', %s for %s' %('L' if e.orientation == 1 else 'R', s2)
                         s3 = calcArcLength(int2 - j.center, Tf.p - j.center, r, j.orientation)
                         path += ', %s for %s' %('L' if j.orientation == 1 else 'R', s3)
@@ -114,12 +114,12 @@ def calcDubinsLength(Ti, Tf, r):
                     c_perp = r * numpy.sqrt(numpy.square(numpy.linalg.norm(j.center - i.center)/2) - numpy.square(r)) / numpy.linalg.norm((j.center - i.center)/2)
                     c_parallel = numpy.linalg.norm((j.center - i.center)/2) - numpy.square(r) / numpy.linalg.norm((j.center - i.center)/2)
 
-                    inTf = (i.center + j.center)/2 - i.orientation * c_perp * perp(j.center - i.center) - c_parallel * normalize(j.center - i.center)
+                    int1 = (i.center + j.center)/2 - i.orientation * c_perp * perp(j.center - i.center) - c_parallel * normalize(j.center - i.center)
                     int2 = (i.center + j.center)/2 + i.orientation * c_perp * perp(j.center - i.center) + c_parallel * normalize(j.center - i.center)
                     
-                    s1 = calcArcLength(Ti.p - i.center, inTf - i.center, r, i.orientation)
+                    s1 = calcArcLength(Ti.p - i.center, int1 - i.center, r, i.orientation)
                     path = '%s for %s' %('L' if i.orientation == 1 else 'R', s1)
-                    s2 = numpy.linalg.norm(inTf - int2)
+                    s2 = numpy.linalg.norm(int1 - int2)
                     path += ', S for %s' %(s2)
                     s3 = calcArcLength(int2 - j.center, Tf.p - j.center, r, j.orientation)
                     path += ', %s for %s' %('L' if j.orientation == 1 else 'R', s3)
@@ -133,7 +133,7 @@ def calcDubinsLength(Ti, Tf, r):
     return dubins_length
 
 #sample input
-'''    
+    
 class TangentVector:
     def __init__(self, _coords, _direction):
         self.p = _coords
@@ -141,8 +141,8 @@ class TangentVector:
 
 
 
-Ti = TangentVector(-122, 37.1, 180)
-Tf = TangentVector(-122, 37, 181)
+Ti = TangentVector(numpy.array([-122, 37.1]), 180)
+Tf = TangentVector(numpy.array([-122, 37]), 181)
 
 print calcDubinsLength(Ti, Tf, 1)
-''' 
+ 
