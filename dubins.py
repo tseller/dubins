@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on Sat Jul 13 16:35:33 2013
@@ -133,16 +134,15 @@ def calcDubinsLength(Ti, Tf, r):
     return dubins_length
 
 #sample input
+if __name__ == "__main__":
     
-class TangentVector:
+  class TangentVector:
     def __init__(self, _coords, _direction):
-        self.p = _coords
-        self.x = numpy.array([numpy.cos(_direction), numpy.sin(_direction)])
+      self.p = _coords
+      self.x = numpy.array([numpy.cos(_direction), numpy.sin(_direction)])
 
+  Ti = TangentVector(numpy.array([-122, 37.1]), 180)
+  Tf = TangentVector(numpy.array([-122, 37]), 181)
 
-
-Ti = TangentVector(numpy.array([-122, 37.1]), 180)
-Tf = TangentVector(numpy.array([-122, 37]), 181)
-
-print calcDubinsLength(Ti, Tf, 1)
+  print calcDubinsLength(Ti, Tf, 1)
  
